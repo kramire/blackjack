@@ -1,6 +1,7 @@
 // Codeworks - Blackjack Game - Javascript
 // Developed by Katie'
 
+
 // Define Deck class with methods to pick and delete cards
 
 class Deck {
@@ -29,16 +30,23 @@ class Deck {
     this.deleteCard(dealtCard);
     return dealtCard;
   }
+}
 
+
+// Define Hand class
+
+class Hand {
+  constructor () {
+    this.cards = [];
+    this.score = 0;
+  }
+  
 }
 
 // Define global variables
 
-let userHand, dealerHand, currentDeck, activeUser;
-let score = {
-  user: 0,
-  dealer: 0
-}
+let user, dealer, currentDeck, activeUser;
+let runningScore = {user:0, dealer:0}
 let userName = 'Player';
 let htmlBase = 'https://raw.githubusercontent.com/crobertsbmw/deckofcards/master/static/img/';
 
@@ -52,16 +60,16 @@ $(document).ready (() => {
 
 function deal() {
     
-    userHand.push(currentDeck.pickCard());
-    $("#userCard0").attr('src',htmlBase + userHand[0][1]+userHand[0][0]+'.png');
-    dealerHand.push(currentDeck.pickCard());
+    user.cards.push(currentDeck.pickCard());
+    $("#userCard0").attr('src',htmlBase + user.cards[0][1]+user.cards[0][0]+'.png');
+    dealer.cards.push(currentDeck.pickCard());
   $("#dealerCard0").attr('src','https://upload.wikimedia.org/wikipedia/commons/d/d4/Card_back_01.svg');
-    userHand.push(currentDeck.pickCard());
-    $(".userHand").append("<img id='userCard1' src="+htmlBase+ userHand[1][1]+userHand[1][0]+'.png'+">");
-    dealerHand.push(currentDeck.pickCard());
-    $(".dealerHand").append("<img id='userCard1' src="+htmlBase+dealerHand[1][1]+dealerHand[1][0]+'.png'+">");
+    user.cards.push(currentDeck.pickCard());
+    $(".userHand").append("<img id='userCard1' src="+htmlBase+ user.cards[1][1]+user.cards[1][0]+'.png'+">");
+    dealer.cards.push(currentDeck.pickCard());
+    $(".dealerHand").append("<img id='userCard1' src="+htmlBase+dealer.cards[1][1]+dealer.cards[1][0]+'.png'+">");
     
-    winner(handScore(userHand),handScore(dealerHand),activeUser,1);
+    winner(handScore(user.cards),handScore(dealer.cards),activeUser,1);
 }
 
 
@@ -100,7 +108,7 @@ function winner(userScore, dealerScore, activeUser, round=0) {
     
   if(round===1) {
     if(userScore === 21) {
-      score.user += 1;
+      runningScore.user += 1;
       endGame()
         $('#userName').addClass('winnerBlink');
     }     
@@ -108,12 +116,12 @@ function winner(userScore, dealerScore, activeUser, round=0) {
 
   else {
     if (userScore > 21) {
-        score.dealer += 1;
+        runningScore.dealer += 1;
         endGame()
         $('#dealer').addClass('winnerBlink');
       }
       else if(userScore === 21 && dealerScore !== 21) {
-        score.user += 1;
+        runningScore.user += 1;
         endGame()
         $('#userName').addClass('winnerBlink');
         }
@@ -121,12 +129,12 @@ function winner(userScore, dealerScore, activeUser, round=0) {
       else {
         if(activeUser===false && dealerScore >= 17) {
           if (dealerScore > 21) {
-            score.user += 1;
+            runningScore.user+= 1;
             endGame()
             $('#userName').addClass('winnerBlink');
           }
           else if (dealerScore > userScore) {
-            score.dealer += 1;
+            runningScore.dealer += 1;
             endGame()
             $('#dealer').addClass('winnerBlink');
           }
@@ -136,7 +144,7 @@ function winner(userScore, dealerScore, activeUser, round=0) {
             $('#userName').addClass('winnerBlink');
           }
           else {
-            score.user += 1;
+            runningScore.user += 1;
             endGame()
             $('#userName').addClass('winnerBlink');
           }
@@ -144,7 +152,7 @@ function winner(userScore, dealerScore, activeUser, round=0) {
     }
   }
 
-  $("#userName").html(userName+' - '+handScore(userHand));
+  $("#userName").html(userName+' - '+handScore(user.cards));
 
 }
 
@@ -163,7 +171,7 @@ function hit(player, hand, activeUser) {
       $('.dealerHand').append("<img id='"+player+'Card'+nextCardIndex+"' src="+htmlBase+hand[nextCardIndex][1]+hand[nextCardIndex][0]+'.png'+">");  
     }
 
-    winner(handScore(userHand),handScore(dealerHand), activeUser);
+    winner(handScore(user.cards),handScore(dealer.cards), activeUser);
 
 }
 
@@ -176,12 +184,12 @@ function hit(player, hand, activeUser) {
 function stand() {
 
   $("#hit").prop("disabled",true);
-  $("#dealerCard0").attr('src', htmlBase+dealerHand[0][1]+dealerHand[0][0]+'.png');
-  $("#dealer").html('Dealer - '+handScore(dealerHand));
+  $("#dealerCard0").attr('src', htmlBase+dealer.cards[0][1]+dealer.cards[0][0]+'.png');
+  $("#dealer").html('Dealer - '+handScore(dealer.cards));
   
   setTimeout(function(){
-    if (handScore(dealerHand)<17) {
-      hit('dealer', dealerHand, false);
+    if (handScore(dealer.cards)<17) {
+      hit('dealer', dealer.cards, false);
       stand();  
     }
   },1000);
@@ -193,22 +201,22 @@ function stand() {
 
 function endGame() {
   
-  $("#dealerCard0").attr('src',htmlBase+dealerHand[0][1]+dealerHand[0][0]+'.png');
+  $("#dealerCard0").attr('src',htmlBase+dealer.cards[0][1]+dealer.cards[0][0]+'.png');
 
   isPlaying = false
   $("#hit").prop("disabled",true);
   $("#stand").prop("disabled",true);
   $("#playAgain").show();
 
-  $("#dealer").html('Dealer - '+handScore(dealerHand));
-  $(".score").html(userName + ' ' +score.user+' - '+score.dealer+' Dealer');
+  $("#dealer").html('Dealer - '+handScore(dealer.cards));
+  $(".score").html(userName + ' ' +runningScore.user+' - '+runningScore.dealer+' Dealer');
 }
 
 
 // Call the hit() function when the "hit" button is clicked
 
 $(function hitButton() {
-  $('#hit').on('click', () => hit('user', userHand, true));
+  $('#hit').on('click', () => hit('user', user.cards, true));
 });
 
 
@@ -216,7 +224,7 @@ $(function hitButton() {
 
 $(function standButton() {
   $('#stand').on('click', () => {
-    winner(handScore(userHand),handScore(dealerHand), false);
+    winner(handScore(user.cards),handScore(dealer.cards), false);
     stand()
   });
 });
@@ -253,8 +261,8 @@ function playGame(isPlaying) {
   $("#dealer").html('Dealer');
   $("#userName").html(userName);
 
-  userHand = [];
-  dealerHand = [];
+  user = new Hand();
+  dealer = new Hand();
   currentDeck = new Deck();
   activeUser = true;
 
@@ -272,26 +280,5 @@ playGame(true);
 
 
   
-  // class Hand {
-  //   constructor () {
-  //     this.hand = [];
-  //   }
-    
-  //   pickCard (deck) {
-  //     let cards = [];
 
-  //     for (suit in deck) {
-  //       deck[suit].forEach( (val) => cards.push([suit,val]));
-  //     }
-
-  //     let dealtCard = cards[Math.floor(Math.random()*cards.length)];
-  //     currentDeck = this.deleteCard(dealtCard, deck);
-
-  //     return dealtCard;
-  //   }
-    
-  //   deleteCard (card, deck) {
-  //     return deck;
-  //   }
-  // }
 

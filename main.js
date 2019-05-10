@@ -1,8 +1,36 @@
 // Codeworks - Blackjack Game - Javascript
 // Developed by Katie'
 
-$(document).ready (() => {
+// Define Deck class with methods to pick and delete cards
 
+class Deck {
+  constructor () {
+    this.deck = {
+    H: ['A', 'K', 'Q', 'J', 0, 9, 8, 7, 6, 5, 4, 3, 2],
+    D: ['A', 'K', 'Q', 'J', 0, 9, 8, 7, 6, 5, 4, 3, 2],
+    S: ['A', 'K', 'Q', 'J', 0, 9, 8, 7, 6, 5, 4, 3, 2],
+    C: ['A', 'K', 'Q', 'J', 0, 9, 8, 7, 6, 5, 4, 3, 2]
+    }
+  }
+  
+  deleteCard (card) {
+    let suit = card[0];
+    let cardIndex = this.deck[suit].indexOf(card[1]);
+    this.deck[suit].splice(cardIndex,1);
+    return this.deck;
+  }
+
+  pickCard () {
+    let cards = [];
+    for (let suit in this.deck) {
+      this.deck[suit].forEach( (val) => cards.push([suit,val]));
+    }
+    let dealtCard = cards[Math.floor(Math.random()*cards.length)];
+    this.deleteCard(dealtCard);
+    return dealtCard;
+  }
+
+}
 
 // Define global variables
 
@@ -13,40 +41,10 @@ let score = {
 }
 let userName = 'Player';
 let htmlBase = 'https://raw.githubusercontent.com/crobertsbmw/deckofcards/master/static/img/';
-  
 
 
-// Given the current deck, select a card.
-// The deck is an object - iterate through key value pairs to push each to a single array.
-// Randomly select a card in the array, given its length.
-// Return the dealt card.
 
-function pickCard(deck) {
-    
-    let cards = [];
-    
-    for (suit in deck) {
-      deck[suit].forEach( (val) => cards.push([suit,val]));
-    }
-    
-    let dealtCard = cards[Math.floor(Math.random()*cards.length)];
-    currentDeck = deleteCard(dealtCard, deck);
-
-    return dealtCard;
-    
-}
-
-
-// After dealing a card, remove it from the deck.
-
-function deleteCard(card, deck) {
-    
-    let suit = card[0];
-    let cardIndex = deck[suit].indexOf(card[1]);
-    deck[suit].splice(cardIndex,1);
-    return deck;
-}
-  
+$(document).ready (() => {
 
 // Deal the first two cards.
 // The user's card are face up. The dealer has one face up card, one face down.
@@ -54,13 +52,13 @@ function deleteCard(card, deck) {
 
 function deal() {
     
-    userHand.push(pickCard(currentDeck));
+    userHand.push(currentDeck.pickCard());
     $("#userCard0").attr('src',htmlBase + userHand[0][1]+userHand[0][0]+'.png');
-    dealerHand.push(pickCard(currentDeck));
+    dealerHand.push(currentDeck.pickCard());
   $("#dealerCard0").attr('src','https://upload.wikimedia.org/wikipedia/commons/d/d4/Card_back_01.svg');
-    userHand.push(pickCard(currentDeck));
+    userHand.push(currentDeck.pickCard());
     $(".userHand").append("<img id='userCard1' src="+htmlBase+ userHand[1][1]+userHand[1][0]+'.png'+">");
-    dealerHand.push(pickCard(currentDeck));
+    dealerHand.push(currentDeck.pickCard());
     $(".dealerHand").append("<img id='userCard1' src="+htmlBase+dealerHand[1][1]+dealerHand[1][0]+'.png'+">");
     
     winner(handScore(userHand),handScore(dealerHand),activeUser,1);
@@ -150,14 +148,12 @@ function winner(userScore, dealerScore, activeUser, round=0) {
 
 }
 
-
-
 // "Hit" the hand with a new card
 // Calculate the score and potential winner
 
 function hit(player, hand, activeUser) {
 
-  hand.push(pickCard(currentDeck));
+  hand.push(currentDeck.pickCard());
   let nextCardIndex = hand.length-1;
     
     if(player==='user') {
@@ -170,7 +166,6 @@ function hit(player, hand, activeUser) {
     winner(handScore(userHand),handScore(dealerHand), activeUser);
 
 }
-
 
 // Disable the "hit" button.
 // Reveal the face down card to the user.
@@ -191,8 +186,6 @@ function stand() {
     }
   },1000);
 }
-
-
 
 // Disable buttons and end game 
 // If the dealer's card wasn't revealed yet, show.
@@ -262,12 +255,7 @@ function playGame(isPlaying) {
 
   userHand = [];
   dealerHand = [];
-  currentDeck = {
-      H: ['A', 'K', 'Q', 'J', 0, 9, 8, 7, 6, 5, 4, 3, 2],
-      D: ['A', 'K', 'Q', 'J', 0, 9, 8, 7, 6, 5, 4, 3, 2],
-      S: ['A', 'K', 'Q', 'J', 0, 9, 8, 7, 6, 5, 4, 3, 2],
-      C: ['A', 'K', 'Q', 'J', 0, 9, 8, 7, 6, 5, 4, 3, 2]
-    };
+  currentDeck = new Deck();
   activeUser = true;
 
   deal();
@@ -282,27 +270,7 @@ playGame(true);
 
 
 
-// ---------------------------------------------------------------
-// ------------- Refactoring---------------
-// ---------------------------------------------------------------
 
-  // class Deck {
-  //   constructor () {
-  //     this.deck = {
-  //     H: ['A', 'K', 'Q', 'J', 0, 9, 8, 7, 6, 5, 4, 3, 2],
-  //     D: ['A', 'K', 'Q', 'J', 0, 9, 8, 7, 6, 5, 4, 3, 2],
-  //     S: ['A', 'K', 'Q', 'J', 0, 9, 8, 7, 6, 5, 4, 3, 2],
-  //     C: ['A', 'K', 'Q', 'J', 0, 9, 8, 7, 6, 5, 4, 3, 2]
-  //     }
-  //   }
-    
-  //   deleteCard (card) {
-  //     let suit = card[0];
-  //     let cardIndex = this.deck[suit].indexOf(card[1]);
-  //     this.deck[suit].splice(cardIndex,1);
-  //     return this.deck;
-  //   }
-  // }
   
   // class Hand {
   //   constructor () {

@@ -1,0 +1,386 @@
+/*Codeworks Project - BlackJack - CSS*/
+/*Developed by Katie*/
+
+
+/****************************/
+/*-----------Reset----------*/
+/****************************/
+
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+body {
+  line-height: 1;
+}
+ol, ul {
+  list-style: none;
+}
+blockquote, q {
+  quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/****************************/
+/*----------Layout----------*/
+/****************************/
+
+body {
+  font-size: 10px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+
+header {
+  display: flex;
+  align-items: baseline;
+}
+
+
+header > * {
+  flex: 1 1 auto;
+}
+
+
+header h3 {
+  text-align: right;
+}
+
+.dealerHand, .userHand {
+  display: flex;
+  justify-content: center;
+}
+
+
+.buttons, .results {
+  text-align: center;
+}
+
+
+.results > * {
+  display: inline;
+}
+
+
+/* Mobile & Tablet Styles */
+@media only screen and (max-width: 960px) {
+  
+  header {
+    display: block;
+  }
+
+  header h3 {
+    text-align: left;
+  }
+}
+
+
+
+
+/****************************/
+/*--Border--Padding--Margin--*/
+/****************************/
+
+h1, h3 {
+  padding: .25em .5em;
+}
+
+
+#hit, #stand {
+  width: 6.5em;
+}
+
+
+.player {
+  margin: .75em auto;
+  border-radius: .2em;
+  padding: .3em .5em;
+  width: 7em;
+}
+
+
+.results {
+  margin: 1em 0;
+  padding: 1em 0;
+}
+
+
+button {
+  border-style: none;
+  border-radius: .5em;
+  padding: .4em;
+  margin: 0 1em;
+}
+
+
+.dealerHand, .userHand {
+  height: 15em;
+  margin: 3.5em 0;
+}
+
+
+img {
+  height: 100%;
+  margin: 0 2em;
+}
+
+
+.scoreBoard > * {
+  margin: 0 5% 0 0;
+}
+
+
+/*Tablet Styles */
+@media only screen and (max-width: 960px) {
+  
+  .dealerHand, .userHand {
+    margin: 2.5em 0;
+    flex-wrap: wrap;
+  }
+  
+  #hit, #stand {
+    width: 4.5em;
+  }
+}
+
+@media only screen and (max-width: 750px) {
+  .dealerHand img, .userHand img {
+    height: 80%;
+  }
+}
+
+@media only screen and (max-width: 650px) {
+  .dealerHand img, .userHand img {
+    height: 70%;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .dealerHand img, .userHand img {
+    height: 60%;
+  }
+}
+
+
+/*Mobile Styles */
+@media only screen and (max-width: 550px) {
+  
+  .dealerHand, .userHand {
+    margin: 1em 0;
+    flex-wrap: wrap;
+  }
+  
+  .dealerHand img, .userHand img {
+    height: 45%;
+    margin-bottom: 1em;
+  }
+
+  #hit, #stand {
+    width: 8em;
+    margin-bottom: .25em;
+  }
+  
+  
+}
+
+
+/****************************/
+/*-------Typography---------*/
+/****************************/
+
+h1, h3, h4, .score, #hit, #stand, #playAgain {
+  font-family: 'Roboto Slab', serif;
+  text-transform: uppercase;
+}
+
+
+h1 {
+  font-size: 5em;
+  font-weight: 700;
+  letter-spacing: .25em;
+}
+
+
+h3 {
+  letter-spacing: .25em;
+  font-style: italic;
+  font-size: 2em;
+  font-weight: 700;
+}
+
+
+h4 {
+  font-style: italic;
+  font-weight: 700;
+  font-size: 2.5em;
+  letter-spacing: .2em;
+}
+
+
+.player {
+  font-family: 'Roboto Slab', serif;
+  font-size: 2.5em;
+  text-align: center;
+  line-height: 1.2em;
+  
+}
+
+
+#hit, #stand, #playAgain {
+  font-size: 3em;
+  text-align: center;
+  line-height: 1.2em;
+}
+
+
+@media only screen and (max-width: 960px) {
+  h1 {
+    font-size: 3em;
+  }
+  
+  h3 {
+    font-size: 1.5em;
+  }
+
+  h4 {
+    font-size: 2em;
+  }
+
+  .player {
+    font-size: 1.8em;
+  }
+
+  #hit, #stand, #playAgain {
+    font-size: 2em;
+  }
+}
+
+@media only screen and (max-width: 400px) {
+  h1 {
+    font-size: 1.5em;
+  }
+  
+  h3 {
+    font-size: 1em;
+  }
+
+  h4 {
+    font-size: 1em;
+  }
+
+  .player {
+    font-size: 1.25em;
+  }
+
+  #hit, #stand, #playAgain {
+    font-size: 1.25em;
+  }
+}
+
+/****************************/
+/*--------Coloring----------*/
+/****************************/
+
+body {
+  background: radial-gradient(#2d7a2c, #112d10);
+}
+
+
+header {
+  background-color: #1b1e1c;
+  box-shadow: 0 .5em 1em rgba(0,0,0,.5);
+}
+
+
+h1, h3 {
+  color: white;
+}
+
+
+h4 {
+  color: #d1bc1d;   
+}
+
+
+.player {
+  background-color: #d1bc1d;
+  color: #1b1e1c;
+  box-shadow: 0 .2em .2em rgba(0,0,0,.3);
+}
+
+button {
+  background-color: #661904;
+  color: #d1bc1d;
+  box-shadow: 0 .2em .2em rgba(0,0,0,.3);
+}
+
+
+/****************************/
+/*-----Button Activity------*/
+/****************************/
+
+button:hover {
+  color: #661904;
+  background-color: #d1bc1d;
+  box-shadow: 0 .4em .4em rgba(0,0,0,.3);
+  cursor: pointer;
+}
+
+
+#playAgain {
+  display: none;
+}
+
+.winnerBlink {
+  animation: blink .75s infinite ease;
+}
+
+@keyframes blink {
+  0% {
+    background-color: #d1bc1d;
+    color: #1b1e1c;
+  }
+  50% {
+    color: #d1bc1d;
+    background-color: #1b1e1c;
+  }
+  100% {
+    background-color: #d1bc1d;
+    color: #1b1e1c;
+  }
+}

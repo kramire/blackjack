@@ -32,7 +32,6 @@ class Deck {
   }
 }
 
-
 // Define Hand class
 
 class Hand {
@@ -40,7 +39,25 @@ class Hand {
     this.cards = [];
     this.score = 0;
   }
-  
+
+  // If the hand's value is greater than 10, then the ace's value is 1.
+  // If the hand's value is less than or equal to 10, then the ace's value is 11. 
+  calcScore () {
+    let score = 0;
+    let aces = this.cards.filter(x => x[1] === 'A');
+    let hand = this.cards.filter(x => x[1] !== 'A');
+
+    for(let i=0; i<hand.length; i++) {
+      let value = hand[i][1];
+      ['K','Q','J',0].indexOf(value) !== -1 ? score += 10 : score += value;
+    }          
+
+    if (aces.length !== 0) {
+      aces.forEach( (ace) => score > 10 ? score+=1 : score+=11);
+    }
+
+    return score; 
+  }
 }
 
 // Define global variables
@@ -61,46 +78,20 @@ $(document).ready (() => {
 function deal() {
     
     user.cards.push(currentDeck.pickCard());
-    $("#userCard0").attr('src',htmlBase + user.cards[0][1]+user.cards[0][0]+'.png');
     dealer.cards.push(currentDeck.pickCard());
-  $("#dealerCard0").attr('src','https://upload.wikimedia.org/wikipedia/commons/d/d4/Card_back_01.svg');
     user.cards.push(currentDeck.pickCard());
-    $(".userHand").append("<img id='userCard1' src="+htmlBase+ user.cards[1][1]+user.cards[1][0]+'.png'+">");
     dealer.cards.push(currentDeck.pickCard());
+
+    $("#userCard0").attr('src',htmlBase + user.cards[0][1]+user.cards[0][0]+'.png');
+    $("#dealerCard0").attr('src','https://upload.wikimedia.org/wikipedia/commons/d/d4/Card_back_01.svg');
+    $(".userHand").append("<img id='userCard1' src="+htmlBase+ user.cards[1][1]+user.cards[1][0]+'.png'+">");
     $(".dealerHand").append("<img id='userCard1' src="+htmlBase+dealer.cards[1][1]+dealer.cards[1][0]+'.png'+">");
     
-    winner(handScore(user.cards),handScore(dealer.cards),activeUser,1);
+    winner(user.calcScore(),dealer.calcScore(),activeUser,1);
 }
-
-
-// Calculate a given hand's score.
-// Each card's value is its number. If it's a K, Q, or J, then it's 10.
-// Calculate the aces' value within the hand.
-// If the hand's value is greater than 10, then the ace's value is 1.
-// If the hand's value is less than or equal to 10, then the ace's value is 11. 
-
-function handScore(hand) {
-    
-    let score = 0;
-    let aces = hand.filter(x => x[1] === 'A');
-    hand = hand.filter(x => x[1] !== 'A');
-    
-    for(let i=0; i<hand.length; i++) {
-        let value = hand[i][1];
-        ['K','Q','J',0].indexOf(value) !== -1 ? score += 10 : score += value;
-    }          
-  
-    if (aces.length !== 0) {
-      aces.forEach( (ace) => score > 10 ? score+=1 : score+=11);
-    }
-     
-    return score;      
-}
-
 
 // Take the user's score and the dealer's score
-// If there's a winner or push, then end the game, and display the result.
-// Update the winner's score.
+// If there's a winner or push, then end the game. Display dealer's cards.
 // If there is no winner, then continue. 
 // Calculate the user's current score, and display next to their name.
 
@@ -152,7 +143,7 @@ function winner(userScore, dealerScore, activeUser, round=0) {
     }
   }
 
-  $("#userName").html(userName+' - '+handScore(user.cards));
+  $("#userName").html(userName + ' - ' + user.calcScore());
 
 }
 
@@ -171,7 +162,7 @@ function hit(player, hand, activeUser) {
       $('.dealerHand').append("<img id='"+player+'Card'+nextCardIndex+"' src="+htmlBase+hand[nextCardIndex][1]+hand[nextCardIndex][0]+'.png'+">");  
     }
 
-    winner(handScore(user.cards),handScore(dealer.cards), activeUser);
+  winner(user.calcScore(), dealer.calcScore(), activeUser);
 
 }
 
@@ -185,10 +176,10 @@ function stand() {
 
   $("#hit").prop("disabled",true);
   $("#dealerCard0").attr('src', htmlBase+dealer.cards[0][1]+dealer.cards[0][0]+'.png');
-  $("#dealer").html('Dealer - '+handScore(dealer.cards));
+  $("#dealer").html('Dealer - ' + dealer.calcScore());
   
   setTimeout(function(){
-    if (handScore(dealer.cards)<17) {
+    if (dealer.calcScore() < 17) {
       hit('dealer', dealer.cards, false);
       stand();  
     }
@@ -202,16 +193,13 @@ function stand() {
 function endGame() {
   
   $("#dealerCard0").attr('src',htmlBase+dealer.cards[0][1]+dealer.cards[0][0]+'.png');
-
-  isPlaying = false
+  $("#dealer").html('Dealer - ' + dealer.calcScore());
+  $(".score").html(userName + ' ' +runningScore.user+' - '+runningScore.dealer+' Dealer');
   $("#hit").prop("disabled",true);
   $("#stand").prop("disabled",true);
   $("#playAgain").show();
-
-  $("#dealer").html('Dealer - '+handScore(dealer.cards));
-  $(".score").html(userName + ' ' +runningScore.user+' - '+runningScore.dealer+' Dealer');
+  isPlaying = false;
 }
-
 
 // Call the hit() function when the "hit" button is clicked
 
@@ -219,16 +207,14 @@ $(function hitButton() {
   $('#hit').on('click', () => hit('user', user.cards, true));
 });
 
-
 // Call the stand() function when the "stand" button is clicked
 
 $(function standButton() {
   $('#stand').on('click', () => {
-    winner(handScore(user.cards),handScore(dealer.cards), false);
+    winner(user.calcScore(), dealer.calcScore(), false);
     stand()
   });
 });
-
 
 // Call the playGame() function when the "play again" button is clicked
 
@@ -243,9 +229,7 @@ $(function playAgainButton() {
     $('#dealer').removeClass('winnerBlink');
     $('#userName').removeClass('winnerBlink');
     playGame(true)});
-})
-
-
+});
 
 // Initialize the game. 
 // Enable/disable appropriate buttons.
@@ -268,12 +252,14 @@ function playGame(isPlaying) {
 
   deal();
     
-}
+};
   
 // ---------------------------------------------------------------
 // ------------- Functions called to start the game---------------
 // ---------------------------------------------------------------
+
 playGame(true);
+
 });
 
 
